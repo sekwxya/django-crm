@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - Furry CRM{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center mb-4">
+            <h1>Добро пожаловать в Furry CRM</h1>
+            <p class="lead">Система управления взаимоотношениями с клиентами и складским учетом</p>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Склад</h5>
+                    <p class="card-text">Управление товарами и складскими операциями</p>
+                    <a href="{% url 'warehouse:product_list' %}" class="btn btn-primary">Перейти к складу</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Заявки</h5>
+                    <p class="card-text">Управление заявками клиентов</p>
+                    <a href="{% url 'orders:order_list' %}" class="btn btn-primary">Перейти к заявкам</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Клиенты</h5>
+                    <p class="card-text">Управление базой клиентов</p>
+                    <a href="{% url 'customers:customer_list' %}" class="btn btn-primary">Перейти к клиентам</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-md-6 offset-md-3 text-center">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Вход в систему</h5>
+                    <p class="card-text">Для работы с системой необходимо авторизоваться</p>
+                    <a href="{% url 'login' %}" class="btn btn-primary">Войти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

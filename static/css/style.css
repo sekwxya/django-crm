@@ -1,0 +1,50 @@
+/* Общие стили */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Стили для форм */
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Стили для таблиц */
+.table-container {
+    overflow-x: auto;
+}
+
+/* Стили для карточек */
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Стили для кнопок */
+.btn {
+    margin-right: 5px;
+}
+
+/* Стили для алертов */
+.alert {
+    margin-bottom: 20px;
+}
+
+/* Стили для навигации */
+.navbar {
+    margin-bottom: 20px;
+}
+
+/* Стили для футера */
+.footer {
+    margin-top: auto;
+    padding: 20px 0;
+    background-color: #f8f9fa;
+} 
