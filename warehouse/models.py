@@ -21,6 +21,8 @@ class Product(models.Model):
     @property
     def total_value(self):
         """Общая стоимость товара на складе"""
+        if self.price is None:
+            return 0
         return self.quantity * self.price
 
 class Movement(models.Model):

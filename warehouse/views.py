@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.db.models import Sum
 from .models import Product, Movement
 from .forms import ProductForm, MovementForm
 
@@ -16,14 +17,22 @@ def product_list(request):
     if search:
         products = products.filter(name__icontains=search)
     
-    # Пагинация
-    paginator = Paginator(products, 10)
+    # Статистика
+    in_stock_count = products.filter(quantity__gt=0).count()
+    low_stock_count = products.filter(quantity__lt=10, quantity__gt=0).count()
+    total_value = sum(product.total_value for product in products)
+    
+    # Пагинация (12 элементов на страницу)
+    paginator = Paginator(products, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
     context = {
         'page_obj': page_obj,
         'search': search,
+        'in_stock_count': in_stock_count,
+        'low_stock_count': low_stock_count,
+        'total_value': total_value,
     }
     return render(request, 'warehouse/product_list.html', context)
 

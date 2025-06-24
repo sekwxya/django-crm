@@ -21,7 +21,8 @@
         <div class="col-md-6">
             <form method="get" class="d-flex">
                 <input type="text" name="search" class="form-control me-2" 
-                       placeholder="Поиск по названию..." value="{{ search }}">
+                       placeholder="Поиск по названию..." 
+                       value="{% if search %}{{ search }}{% endif %}">
                 <button type="submit" class="btn btn-outline-secondary">Поиск</button>
             </form>
         </div>
@@ -41,7 +42,7 @@
             <div class="card bg-success text-white">
                 <div class="card-body">
                     <h5 class="card-title">В наличии</h5>
-                    <h3>{{ page_obj.paginator.count }}</h3>
+                    <h3>{{ in_stock_count }}</h3>
                 </div>
             </div>
         </div>
@@ -49,7 +50,7 @@
             <div class="card bg-warning text-dark">
                 <div class="card-body">
                     <h5 class="card-title">Заканчивается</h5>
-                    <h3>0</h3>
+                    <h3>{{ low_stock_count }}</h3>
                 </div>
             </div>
         </div>
@@ -57,7 +58,7 @@
             <div class="card bg-info text-white">
                 <div class="card-body">
                     <h5 class="card-title">Общая стоимость</h5>
-                    <h3>₽0</h3>
+                    <h3>₽{{ total_value }}</h3>
                 </div>
             </div>
         </div>
@@ -94,6 +95,8 @@
                                        class="btn btn-outline-secondary btn-sm">Изменить</a>
                                     <a href="{% url 'warehouse:movement_create' %}?product={{ product.pk }}" 
                                        class="btn btn-outline-success btn-sm">Движение</a>
+                                    <a href="{% url 'warehouse:product_delete' product.pk %}" 
+                                       class="btn btn-outline-danger btn-sm">Удалить</a>
                                 </div>
                             </div>
                         </div>

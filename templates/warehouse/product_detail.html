@@ -1,1 +1,169 @@
-<h1>Product Detail</h1> 
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Склад - {{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>{{ product.name }}</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <div class="btn-group">
+                <a href="{% url 'warehouse:product_edit' product.pk %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-pencil"></i> Изменить
+                </a>
+                <a href="{% url 'warehouse:movement_create' %}?product={{ product.pk }}" class="btn btn-success">
+                    <i class="bi bi-arrow-left-right"></i> Движение
+                </a>
+                <a href="{% url 'warehouse:product_delete' product.pk %}" class="btn btn-outline-danger">
+                    <i class="bi bi-trash"></i> Удалить
+                </a>
+                <a href="{% url 'warehouse:product_list' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left"></i> Назад
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Информация о товаре -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Информация о товаре</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Наименование:</strong></div>
+                        <div class="col-8">{{ product.name }}</div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Описание:</strong></div>
+                        <div class="col-8">{{ product.description|default:"Не указано" }}</div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Количество:</strong></div>
+                        <div class="col-8">
+                            <span class="badge {% if product.quantity == 0 %}bg-danger{% elif product.quantity < 10 %}bg-warning{% else %}bg-success{% endif %} fs-6">
+                                {{ product.quantity }} шт.
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Цена за единицу:</strong></div>
+                        <div class="col-8">{{ product.price }} ₽</div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Общая стоимость:</strong></div>
+                        <div class="col-8">{{ product.total_value }} ₽</div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Дата создания:</strong></div>
+                        <div class="col-8">{{ product.created_at|date:"d.m.Y H:i" }}</div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Последнее обновление:</strong></div>
+                        <div class="col-8">{{ product.updated_at|date:"d.m.Y H:i" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Статистика</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <div class="text-center">
+                                <h4 class="text-primary">{{ product.quantity }}</h4>
+                                <small class="text-muted">Текущий остаток</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center">
+                                <h4 class="text-success">{{ product.total_value }} ₽</h4>
+                                <small class="text-muted">Общая стоимость</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="text-center">
+                                <h4 class="text-info">{{ movements|length }}</h4>
+                                <small class="text-muted">Операций</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center">
+                                <h4 class="text-warning">{{ product.price }} ₽</h4>
+                                <small class="text-muted">Цена за единицу</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- История движений -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3>История движений</h3>
+                    <a href="{% url 'warehouse:movement_list' %}?product={{ product.pk }}" class="btn btn-outline-primary btn-sm">
+                        Все движения
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if movements %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Дата</th>
+                                        <th>Тип</th>
+                                        <th>Количество</th>
+                                        <th>Пользователь</th>
+                                        <th>Примечания</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for movement in movements %}
+                                        <tr>
+                                            <td>{{ movement.date|date:"d.m.Y H:i" }}</td>
+                                            <td>
+                                                <span class="badge {% if movement.movement_type == 'in' %}bg-success{% else %}bg-danger{% endif %}">
+                                                    {{ movement.get_movement_type_display }}
+                                                </span>
+                                            </td>
+                                            <td>{{ movement.quantity }} шт.</td>
+                                            <td>{{ movement.user.username|default:"Система" }}</td>
+                                            <td>{{ movement.notes|default:"-" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center">История движений пуста</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

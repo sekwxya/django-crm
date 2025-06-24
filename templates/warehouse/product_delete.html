@@ -1,1 +1,48 @@
-<h1>Product Delete</h1> 
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Склад - Удалить товар{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="text-center">Удалить товар</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h4>Внимание!</h4>
+                        <p>Вы собираетесь удалить товар <strong>"{{ product.name }}"</strong>.</p>
+                        <p>Это действие нельзя отменить!</p>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Наименование:</strong></div>
+                        <div class="col-8">{{ product.name }}</div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Количество:</strong></div>
+                        <div class="col-8">{{ product.quantity }} шт.</div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Цена:</strong></div>
+                        <div class="col-8">{{ product.price }} ₽</div>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'warehouse:product_detail' product.pk %}" class="btn btn-secondary me-md-2">Отмена</a>
+                            <button type="submit" class="btn btn-danger">Удалить товар</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
