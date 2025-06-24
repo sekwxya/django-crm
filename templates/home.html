@@ -14,7 +14,7 @@
     {% if user.is_authenticated %}
     <div class="row">
         {% if user.is_superuser or user.profile.role.name == 'admin' or user.profile.role.name == 'warehouse' %}
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Склад</h5>
@@ -25,7 +25,7 @@
         </div>
         {% endif %}
         {% if user.is_superuser or user.profile.role.name == 'admin' or user.profile.role.name == 'manager' %}
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Заявки</h5>
@@ -34,12 +34,21 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Клиенты</h5>
                     <p class="card-text">Управление базой клиентов</p>
                     <a href="{% url 'customers:customer_list' %}" class="btn btn-primary">Перейти к клиентам</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info">Отчет по заявкам</h5>
+                    <p class="card-text">Формирование и экспорт отчетов по заявкам за период</p>
+                    <a href="{% url 'reports:report_orders' %}" class="btn btn-info text-white">Перейти к отчету</a>
                 </div>
             </div>
         </div>

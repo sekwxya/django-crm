@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Отчет по заявкам{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Отчет по заявкам</h1>
+    <form method="post" class="row g-3">
+        {% csrf_token %}
+        <div class="col-md-4">
+            <label for="start_date" class="form-label">Дата начала</label>
+            <input type="date" id="start_date" name="start_date" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+            <label for="end_date" class="form-label">Дата окончания</label>
+            <input type="date" id="end_date" name="end_date" class="form-control" required>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary btn-lg w-100">
+                <i class="bi bi-file-earmark-excel"></i> Скачать отчет (Excel)
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %} 
