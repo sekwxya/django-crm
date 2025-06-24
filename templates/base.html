@@ -21,15 +21,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'warehouse:product_list' %}">Склад</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'orders:order_list' %}">Заявки</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'customers:customer_list' %}">Клиенты</a>
-                        </li>
+                        {% if user.is_superuser or user.profile.role.name == 'admin' or user.profile.role.name == 'manager' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'customers:customer_list' %}">Клиенты</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'orders:order_list' %}">Заявки</a>
+                            </li>
+                        {% endif %}
+                        {% if user.is_superuser or user.profile.role.name == 'admin' or user.profile.role.name == 'warehouse' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'warehouse:product_list' %}">Склад</a>
+                            </li>
+                        {% endif %}
                     {% endif %}
                 </ul>
                 <ul class="navbar-nav">
@@ -38,14 +42,16 @@
                             <span class="nav-link">{{ user.username }}</span>
                         </li>
                         <li class="nav-item">
-                            <form method="post" action="{% url 'logout' %}">
+                            <form method="post" action="{% url 'logout' %}" class="d-inline">
                                 {% csrf_token %}
-                                <button type="submit">Выйти</button>
+                                <button type="submit" class="btn btn-primary btn-lg ms-2">
+                                    <i class="bi bi-box-arrow-right"></i> Выйти
+                                </button>
                             </form>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Войти</a>
+                            <a class="btn btn-primary btn-lg" href="{% url 'login' %}">Войти</a>
                         </li>
                     {% endif %}
                 </ul>

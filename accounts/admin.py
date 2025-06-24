@@ -16,6 +16,11 @@ class CustomUserAdmin(UserAdmin):
         return obj.profile.role.get_name_display() if obj.profile.role else 'Нет роли'
     get_role.short_description = 'Роль'
 
+    def get_inline_instances(self, request, obj=None):
+        if not obj:
+            return []
+        return super().get_inline_instances(request, obj)
+
 @admin.register(Role)
 class RoleAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')

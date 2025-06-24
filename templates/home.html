@@ -13,6 +13,7 @@
 
     {% if user.is_authenticated %}
     <div class="row">
+        {% if user.is_superuser or user.profile.role.name == 'admin' or user.profile.role.name == 'warehouse' %}
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
@@ -22,6 +23,8 @@
                 </div>
             </div>
         </div>
+        {% endif %}
+        {% if user.is_superuser or user.profile.role.name == 'admin' or user.profile.role.name == 'manager' %}
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
@@ -40,6 +43,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
     {% else %}
     <div class="row">

@@ -5,10 +5,12 @@ from django.core.paginator import Paginator
 from django.db.models import Q, Count
 from .models import Customer
 from .forms import CustomerForm
+from accounts.utils import role_required
 
 # Create your views here.
 
 @login_required
+@role_required('admin', 'manager')
 def customer_list(request):
     """Список всех клиентов"""
     customers = Customer.objects.all()
@@ -42,6 +44,7 @@ def customer_list(request):
     return render(request, 'customers/customer_list.html', context)
 
 @login_required
+@role_required('admin', 'manager')
 def customer_create(request):
     """Создание нового клиента"""
     if request.method == 'POST':
@@ -56,6 +59,7 @@ def customer_create(request):
     return render(request, 'customers/customer_create.html', {'form': form})
 
 @login_required
+@role_required('admin', 'manager')
 def customer_detail(request, pk):
     """Детальная информация о клиенте"""
     customer = get_object_or_404(Customer, pk=pk)
@@ -74,6 +78,7 @@ def customer_detail(request, pk):
     return render(request, 'customers/customer_detail.html', context)
 
 @login_required
+@role_required('admin', 'manager')
 def customer_edit(request, pk):
     """Редактирование клиента"""
     customer = get_object_or_404(Customer, pk=pk)
@@ -90,6 +95,7 @@ def customer_edit(request, pk):
     return render(request, 'customers/customer_edit.html', {'form': form, 'customer': customer})
 
 @login_required
+@role_required('admin', 'manager')
 def customer_delete(request, pk):
     """Удаление клиента"""
     customer = get_object_or_404(Customer, pk=pk)

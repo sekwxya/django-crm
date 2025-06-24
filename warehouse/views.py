@@ -6,8 +6,10 @@ from django.core.paginator import Paginator
 from django.db.models import Sum
 from .models import Product, Movement
 from .forms import ProductForm, MovementForm
+from accounts.utils import role_required
 
 @login_required
+@role_required('admin', 'warehouse')
 def product_list(request):
     """Список всех товаров"""
     products = Product.objects.all()
@@ -37,6 +39,7 @@ def product_list(request):
     return render(request, 'warehouse/product_list.html', context)
 
 @login_required
+@role_required('admin', 'warehouse')
 def product_create(request):
     """Создание нового товара"""
     if request.method == 'POST':
@@ -51,6 +54,7 @@ def product_create(request):
     return render(request, 'warehouse/product_create.html', {'form': form})
 
 @login_required
+@role_required('admin', 'warehouse')
 def product_detail(request, pk):
     """Детальная информация о товаре"""
     product = get_object_or_404(Product, pk=pk)
@@ -63,6 +67,7 @@ def product_detail(request, pk):
     return render(request, 'warehouse/product_detail.html', context)
 
 @login_required
+@role_required('admin', 'warehouse')
 def product_edit(request, pk):
     """Редактирование товара"""
     product = get_object_or_404(Product, pk=pk)
@@ -79,6 +84,7 @@ def product_edit(request, pk):
     return render(request, 'warehouse/product_edit.html', {'form': form, 'product': product})
 
 @login_required
+@role_required('admin', 'warehouse')
 def product_delete(request, pk):
     """Удаление товара"""
     product = get_object_or_404(Product, pk=pk)
@@ -91,6 +97,7 @@ def product_delete(request, pk):
     return render(request, 'warehouse/product_delete.html', {'product': product})
 
 @login_required
+@role_required('admin', 'warehouse')
 def movement_list(request):
     """Список всех движений товаров"""
     movements = Movement.objects.select_related('product', 'user').all()
@@ -112,6 +119,7 @@ def movement_list(request):
     return render(request, 'warehouse/movement_list.html', context)
 
 @login_required
+@role_required('admin', 'warehouse')
 def movement_create(request):
     """Создание нового движения товара"""
     if request.method == 'POST':

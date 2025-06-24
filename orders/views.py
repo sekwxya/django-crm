@@ -10,8 +10,10 @@ import openpyxl
 from openpyxl.styles import Font, Alignment, PatternFill
 from .models import Order, OrderStatus, OrderComment
 from .forms import OrderForm, OrderEditForm, OrderCommentForm
+from accounts.utils import role_required
 
 @login_required
+@role_required('admin', 'manager')
 def order_list(request):
     """Список всех заявок"""
     orders = Order.objects.select_related('customer', 'manager', 'status').all()
@@ -75,6 +77,7 @@ def order_list(request):
     return render(request, 'orders/order_list.html', context)
 
 @login_required
+@role_required('admin', 'manager')
 def order_create(request):
     """Создание новой заявки"""
     if request.method == 'POST':
@@ -94,6 +97,7 @@ def order_create(request):
     return render(request, 'orders/order_create.html', {'form': form})
 
 @login_required
+@role_required('admin', 'manager')
 def order_detail(request, pk):
     """Детальная информация о заявке"""
     order = get_object_or_404(Order, pk=pk)
@@ -119,6 +123,7 @@ def order_detail(request, pk):
     return render(request, 'orders/order_detail.html', context)
 
 @login_required
+@role_required('admin', 'manager')
 def order_edit(request, pk):
     """Редактирование заявки"""
     order = get_object_or_404(Order, pk=pk)
@@ -135,6 +140,7 @@ def order_edit(request, pk):
     return render(request, 'orders/order_edit.html', {'form': form, 'order': order})
 
 @login_required
+@role_required('admin', 'manager')
 def order_delete(request, pk):
     """Удаление заявки"""
     order = get_object_or_404(Order, pk=pk)
@@ -147,6 +153,7 @@ def order_delete(request, pk):
     return render(request, 'orders/order_delete.html', {'order': order})
 
 @login_required
+@role_required('admin', 'manager')
 def add_comment(request, pk):
     """Добавление комментария к заявке"""
     order = get_object_or_404(Order, pk=pk)
@@ -163,6 +170,7 @@ def add_comment(request, pk):
     return redirect('orders:order_detail', pk=pk)
 
 @login_required
+@role_required('admin', 'manager')
 def generate_report(request):
     """Генерация отчета по заявкам"""
     if request.method == 'POST':
