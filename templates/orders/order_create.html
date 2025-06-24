@@ -1,1 +1,28 @@
-<h1>Order Create</h1> 
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Заявки - Новая заявка{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center">Создать новую заявку</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'orders:order_list' %}" class="btn btn-secondary me-md-2">Отмена</a>
+                            <button type="submit" class="btn btn-primary">Создать заявку</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

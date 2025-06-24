@@ -1,1 +1,206 @@
-<h1>Customer Detail</h1> 
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Клиенты - {{ customer.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>{{ customer.name }}</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <div class="btn-group">
+                <a href="{% url 'customers:customer_edit' customer.pk %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-pencil"></i> Изменить
+                </a>
+                <a href="{% url 'customers:customer_delete' customer.pk %}" class="btn btn-outline-danger">
+                    <i class="bi bi-trash"></i> Удалить
+                </a>
+                <a href="{% url 'customers:customer_list' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left"></i> Назад
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Информация о клиенте -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Информация о клиенте</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Наименование:</strong></div>
+                        <div class="col-8">{{ customer.name }}</div>
+                    </div>
+                    
+                    {% if customer.contact_person %}
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Контактное лицо:</strong></div>
+                            <div class="col-8">{{ customer.contact_person }}</div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if customer.email %}
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Email:</strong></div>
+                            <div class="col-8">
+                                <a href="mailto:{{ customer.email }}">{{ customer.email }}</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if customer.phone %}
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Телефон:</strong></div>
+                            <div class="col-8">
+                                <a href="tel:{{ customer.phone }}">{{ customer.phone }}</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if customer.address %}
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Адрес:</strong></div>
+                            <div class="col-8">{{ customer.address }}</div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if customer.notes %}
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Примечания:</strong></div>
+                            <div class="col-8">{{ customer.notes }}</div>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Дата создания:</strong></div>
+                        <div class="col-8">{{ customer.created_at|date:"d.m.Y H:i" }}</div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Последнее обновление:</strong></div>
+                        <div class="col-8">{{ customer.updated_at|date:"d.m.Y H:i" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Статистика</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <div class="text-center">
+                                <h4 class="text-primary">{{ orders|length }}</h4>
+                                <small class="text-muted">Заявок</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center">
+                                <h4 class="text-success">{{ customer.created_at|date:"d.m.Y" }}</h4>
+                                <small class="text-muted">Дата регистрации</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="text-center">
+                                <h4 class="text-info">{{ customer.updated_at|date:"d.m.Y" }}</h4>
+                                <small class="text-muted">Последнее обновление</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center">
+                                <h4 class="text-warning">
+                                    {% if customer.email and customer.phone %}2{% elif customer.email or customer.phone %}1{% else %}0{% endif %}
+                                </h4>
+                                <small class="text-muted">Контактов</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- История заявок -->
+    {% if orders %}
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3>История заявок</h3>
+                        <a href="{% url 'orders:order_list' %}?customer={{ customer.pk }}" class="btn btn-outline-primary btn-sm">
+                            Все заявки
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Номер</th>
+                                        <th>Заголовок</th>
+                                        <th>Статус</th>
+                                        <th>Дата создания</th>
+                                        <th>Менеджер</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'orders:order_detail' order.pk %}">
+                                                    {{ order.number }}
+                                                </a>
+                                            </td>
+                                            <td>{{ order.title }}</td>
+                                            <td>
+                                                {% if order.status.name == 'new' %}
+                                                    <span class="badge bg-primary">{{ order.status.get_name_display }}</span>
+                                                {% elif order.status.name == 'in_progress' %}
+                                                    <span class="badge bg-warning text-dark">{{ order.status.get_name_display }}</span>
+                                                {% elif order.status.name == 'completed' %}
+                                                    <span class="badge bg-success">{{ order.status.get_name_display }}</span>
+                                                {% elif order.status.name == 'rejected' %}
+                                                    <span class="badge bg-danger">{{ order.status.get_name_display }}</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ order.status.get_name_display }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ order.created_at|date:"d.m.Y H:i" }}</td>
+                                            <td>{{ order.manager.username|default:"Не назначен" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>История заявок</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted text-center">У клиента пока нет заявок</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

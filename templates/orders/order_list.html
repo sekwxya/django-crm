@@ -1,1 +1,186 @@
-<h1>Order List</h1> 
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Заявки - Список{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>Заявки</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'orders:order_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Новая заявка
+            </a>
+        </div>
+    </div>
+
+    <!-- Фильтры и поиск -->
+    <form method="get" class="row g-2 mb-4 align-items-end">
+        <div class="col-md-3">
+            <input type="text" name="search" class="form-control" placeholder="Поиск по номеру, клиенту, описанию..." value="{{ search|default:'' }}">
+        </div>
+        <div class="col-md-2">
+            <select name="status" class="form-select">
+                <option value="">Все статусы</option>
+                {% for status in statuses %}
+                    <option value="{{ status.name }}" {% if status_filter == status.name %}selected{% endif %}>{{ status.get_name_display }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="priority" class="form-select">
+                <option value="">Любой приоритет</option>
+                {% for value, label in priorities %}
+                    <option value="{{ value }}" {% if priority_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="text" name="manager" class="form-control" placeholder="Менеджер" value="{{ manager_filter|default:'' }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-secondary w-100">Фильтр</button>
+        </div>
+    </form>
+
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="card-title">Всего</h6>
+                    <h4>{{ total_orders }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Новые</h6>
+                    <h4>{{ new_orders }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center bg-warning text-dark">
+                <div class="card-body">
+                    <h6 class="card-title">В работе</h6>
+                    <h4>{{ in_progress_orders }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Выполнено</h6>
+                    <h4>{{ completed_orders }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center bg-danger text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Просрочено</h6>
+                    <h4>{{ overdue_orders }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Таблица заявок -->
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Номер</th>
+                    <th>Клиент</th>
+                    <th>Заголовок</th>
+                    <th>Статус</th>
+                    <th>Приоритет</th>
+                    <th>Менеджер</th>
+                    <th>Дедлайн</th>
+                    <th>Создана</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in page_obj %}
+                    <tr>
+                        <td><a href="{% url 'orders:order_detail' order.pk %}">{{ order.number }}</a></td>
+                        <td><a href="{% url 'customers:customer_detail' order.customer.pk %}">{{ order.customer.name }}</a></td>
+                        <td>{{ order.title }}</td>
+                        <td>
+                            {% if order.status.name == 'new' %}
+                                <span class="badge bg-primary">{{ order.status.get_name_display }}</span>
+                            {% elif order.status.name == 'in_progress' %}
+                                <span class="badge bg-warning text-dark">{{ order.status.get_name_display }}</span>
+                            {% elif order.status.name == 'completed' %}
+                                <span class="badge bg-success">{{ order.status.get_name_display }}</span>
+                            {% elif order.status.name == 'rejected' %}
+                                <span class="badge bg-danger">{{ order.status.get_name_display }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ order.status.get_name_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if order.priority == 'urgent' %}
+                                <span class="badge bg-danger">Срочный</span>
+                            {% elif order.priority == 'high' %}
+                                <span class="badge bg-warning text-dark">Высокий</span>
+                            {% elif order.priority == 'medium' %}
+                                <span class="badge bg-info text-dark">Средний</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Низкий</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ order.manager.username|default:'—' }}</td>
+                        <td>{% if order.deadline %}{{ order.deadline|date:'d.m.Y H:i' }}{% else %}—{% endif %}</td>
+                        <td>{{ order.created_at|date:'d.m.Y H:i' }}</td>
+                        <td>
+                            <a href="{% url 'orders:order_edit' order.pk %}" class="btn btn-outline-secondary btn-sm">Изменить</a>
+                            <a href="{% url 'orders:order_delete' order.pk %}" class="btn btn-outline-danger btn-sm">Удалить</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">Заявки не найдены</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Пагинация -->
+    {% if page_obj.has_other_pages %}
+        <nav aria-label="Навигация по страницам">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}">Первая</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}">Предыдущая</a>
+                    </li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}">Следующая</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}">Последняя</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %} 

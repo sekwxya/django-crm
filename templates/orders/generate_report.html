@@ -1,1 +1,35 @@
-<h1>Generate Report</h1> 
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Заявки - Отчет{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center">Генерация отчета по заявкам</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="start_date" class="form-label">Дата начала</label>
+                            <input type="date" id="start_date" name="start_date" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="end_date" class="form-label">Дата окончания</label>
+                            <input type="date" id="end_date" name="end_date" class="form-control" required>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'orders:order_list' %}" class="btn btn-secondary me-md-2">Отмена</a>
+                            <button type="submit" class="btn btn-primary">Скачать отчет</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

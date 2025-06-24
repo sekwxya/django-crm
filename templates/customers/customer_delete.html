@@ -1,1 +1,60 @@
-<h1>Customer Delete</h1>
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Клиенты - Удалить клиента{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="text-center">Удалить клиента</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h4 class="alert-heading">Внимание!</h4>
+                        <p>Вы действительно хотите удалить клиента <strong>"{{ customer.name }}"</strong>?</p>
+                        <hr>
+                        <p class="mb-0">Это действие нельзя отменить. Все данные о клиенте будут удалены навсегда.</p>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Наименование:</strong></div>
+                        <div class="col-8">{{ customer.name }}</div>
+                    </div>
+                    
+                    {% if customer.contact_person %}
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Контактное лицо:</strong></div>
+                            <div class="col-8">{{ customer.contact_person }}</div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if customer.email %}
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Email:</strong></div>
+                            <div class="col-8">{{ customer.email }}</div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if customer.phone %}
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Телефон:</strong></div>
+                            <div class="col-8">{{ customer.phone }}</div>
+                        </div>
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'customers:customer_detail' customer.pk %}" class="btn btn-secondary me-md-2">Отмена</a>
+                            <button type="submit" class="btn btn-danger">Удалить клиента</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

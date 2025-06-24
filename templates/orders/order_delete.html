@@ -1,1 +1,41 @@
-<h1>Order Delete</h1> 
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Заявки - Удалить заявку{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="text-center">Удалить заявку</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h4 class="alert-heading">Внимание!</h4>
+                        <p>Вы действительно хотите удалить заявку <strong>"{{ order.number }}"</strong>?</p>
+                        <hr>
+                        <p class="mb-0">Это действие нельзя отменить. Все данные о заявке будут удалены навсегда.</p>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Номер:</strong></div>
+                        <div class="col-8">{{ order.number }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4"><strong>Клиент:</strong></div>
+                        <div class="col-8">{{ order.customer.name }}</div>
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'orders:order_detail' order.pk %}" class="btn btn-secondary me-md-2">Отмена</a>
+                            <button type="submit" class="btn btn-danger">Удалить заявку</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
