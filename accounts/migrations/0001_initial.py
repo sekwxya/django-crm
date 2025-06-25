@@ -43,3 +43,17 @@ class Migration(migrations.Migration):
             },
         ),
     ]
+
+    def create_roles(apps, schema_editor):
+        Role = apps.get_model('accounts', 'Role')
+        roles = [
+            ('admin', 'Администратор'),
+            ('manager', 'Менеджер'),
+            ('warehouse', 'Кладовщик'),
+        ]
+        for name, desc in roles:
+            Role.objects.get_or_create(name=name, defaults={'description': desc})
+
+    operations += [
+        migrations.RunPython(create_roles)
+    ]

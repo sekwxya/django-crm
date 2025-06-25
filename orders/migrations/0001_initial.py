@@ -66,3 +66,18 @@ class Migration(migrations.Migration):
             },
         ),
     ]
+
+    def create_statuses(apps, schema_editor):
+        OrderStatus = apps.get_model('orders', 'OrderStatus')
+        statuses = [
+            ('new', 'Новая', '#007bff'),
+            ('in_progress', 'В работе', '#ffc107'),
+            ('completed', 'Выполнена', '#28a745'),
+            ('rejected', 'Отклонена', '#dc3545'),
+        ]
+        for name, desc, color in statuses:
+            OrderStatus.objects.get_or_create(name=name, defaults={'description': desc, 'color': color})
+
+    operations += [
+        migrations.RunPython(create_statuses)
+    ]
