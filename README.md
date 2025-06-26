@@ -48,13 +48,16 @@ your_password
 
 4. Создайте базу данных PostgreSQL:
 ```bash
-CREATE DATABASE furry_crm;
 CREATE USER furry_crm_user WITH PASSWORD 'your_password';
+CREATE DATABASE furry_crm OWNER furry_crm_user;
 ALTER ROLE furry_crm_user SET client_encoding TO 'utf8';
 ALTER ROLE furry_crm_user SET default_transaction_isolation TO 'read committed';
 ALTER ROLE furry_crm_user SET timezone TO 'UTC';
 GRANT ALL PRIVILEGES ON DATABASE furry_crm TO furry_crm_user;
+\\c furry_crm
 GRANT ALL ON SCHEMA public TO furry_crm_user;
+ALTER SCHEMA public OWNER TO furry_crm_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO furry_crm_user;
 ```
 
 5. Создайте файл .env в корневой директории проекта со следующими параметрами (Необходимо сгенерировать secret key, db_password - от пароля furry_crm_user созданного пунктом ранее):
@@ -68,9 +71,6 @@ DB_HOST=localhost
 DB_PORT=5432
 ```
 
-```
-pip install psycopg
-```
 
 6. Примените миграции:
 ```bash
@@ -86,6 +86,10 @@ python manage.py createsuperuser
 ```bash
 python manage.py runserver
 ```
+## Доступ
+
+- Доступ к приложению http://127.0.0.1:8000/
+- Доступ к админ панели http://127.0.0.1:8000/admin
 
 ## Технологии
 
